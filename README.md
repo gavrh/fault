@@ -1,8 +1,8 @@
 # fault
 
-Network fault injection for processes and destinations.
+Network fault injection for processes and destinations
 
-Fault uses Linux traffic control to simulate poor network conditions such as latency, packet loss, jitter, corruption, duplication, reordering, and bandwidth limits.
+Fault uses Linux traffic control to simulate poor network conditions such as latency, packet loss, jitter, corruption, duplication, reordering, and bandwidth limits
 
 Fault can either isolate and fault a process:
 
@@ -18,7 +18,7 @@ sudo fault discord.com github.com --latency 200 --loss 5
 
 ## Requirements
 
-Fault currently requires Linux and root privileges.
+Fault currently requires Linux and root privileges
 
 The following commands must be available:
 
@@ -26,9 +26,9 @@ The following commands must be available:
 - `tc`
 - `nft`
 
-`ip` and `tc` are provided by `iproute2`. `nft` is provided by `nftables`.
+`ip` and `tc` are provided by `iproute2`. `nft` is provided by `nftables`
 
-The kernel must also support network namespaces, NetEm, and IFB devices.
+The kernel must also support network namespaces, NetEm, and IFB devices
 
 ## Installation
 
@@ -58,7 +58,7 @@ sudo install target/release/fault /usr/local/bin/fault
 fault [OPTIONS] <TARGET>...
 ```
 
-Fault automatically chooses between process and destination mode based on the first target.
+Fault automatically chooses between process and destination mode based on the first target
 
 ### Destination mode
 
@@ -82,7 +82,7 @@ URLs are also accepted:
 sudo fault https://discord.com --latency 200
 ```
 
-Domains are resolved to their IP addresses when Fault starts. Fault then applies the configured conditions to traffic traveling both to and from those addresses.
+Domains are resolved to their IP addresses when Fault starts. Fault then applies the configured conditions to traffic traveling both to and from those addresses
 
 For example:
 
@@ -90,9 +90,9 @@ For example:
 sudo fault discord.com --latency 200
 ```
 
-adds approximately 200 ms of delay to outgoing Discord traffic and 200 ms to incoming Discord traffic.
+adds approximately 200 ms of delay to outgoing Discord traffic and 200 ms to incoming Discord traffic
 
-Fault continues running until `Ctrl+C` is pressed.
+Fault continues running until `Ctrl+C` is pressed
 
 ### Process mode
 
@@ -102,7 +102,7 @@ Pass an existing executable or script path as the first target:
 sudo fault ./server --latency 200
 ```
 
-Fault creates an isolated network namespace for the process and applies the configured conditions to both its incoming and outgoing traffic.
+Fault creates an isolated network namespace for the process and applies the configured conditions to both its incoming and outgoing traffic
 
 Arguments can also be passed to the process. Use `--` when the process arguments could be interpreted as Fault options:
 
@@ -116,7 +116,7 @@ The first target must currently be an existing file path. Commands resolved only
 sudo fault cargo run
 ```
 
-are not currently detected as process targets.
+are not currently detected as process targets
 
 ### Publishing ports
 
@@ -132,7 +132,7 @@ For example, if the process listens on port `3000`:
 sudo fault ./server --latency 200 --publish 8080:3000
 ```
 
-traffic sent to host port `8080` is forwarded to port `3000` inside the process namespace.
+traffic sent to host port `8080` is forwarded to port `3000` inside the process namespace
 
 Multiple ports can be published:
 
@@ -143,7 +143,7 @@ sudo fault ./server \
     --latency 200
 ```
 
-`--publish` is only available in process mode and currently supports TCP.
+`--publish` is only available in process mode and currently supports TCP
 
 ## Fault options
 
@@ -167,9 +167,9 @@ sudo fault discord.com \
     --rate 10
 ```
 
-Percentage values must be between `0` and `100`.
+Percentage values must be between `0` and `100`
 
-Options that are not specified default to `0` and are not included in the NetEm configuration.
+Options that are not specified default to `0` and are not included in the NetEm configuration
 
 ### Verbose logging
 
@@ -187,22 +187,22 @@ sudo fault -vv ./server --loss 5
 
 ## How it works
 
-For destination targets, Fault resolves the targets to IP addresses and uses `tc` filters to select matching traffic. Outgoing traffic is shaped on the host interface, while incoming traffic is redirected through an IFB device so NetEm can apply the same conditions in the opposite direction.
+For destination targets, Fault resolves the targets to IP addresses and uses `tc` filters to select matching traffic. Outgoing traffic is shaped on the host interface, while incoming traffic is redirected through an IFB device so NetEm can apply the same conditions in the opposite direction
 
-For process targets, Fault creates a network namespace and veth pair. The process runs inside the namespace while nftables provides forwarding and NAT to the host network. NetEm is applied on both sides of the veth pair.
+For process targets, Fault creates a network namespace and veth pair. The process runs inside the namespace while nftables provides forwarding and NAT to the host network. NetEm is applied on both sides of the veth pair
 
-Fault tracks the networking resources it creates and removes them when the session finishes normally or is interrupted with `Ctrl+C`.
+Fault tracks the networking resources it creates and removes them when the session finishes normally or is interrupted with `Ctrl+C`
 
 ## Current limitations
 
-- Linux only.
-- Root privileges are currently required.
-- Process mode only detects existing file paths as process targets.
-- Domains are resolved when Fault starts; DNS changes are not continuously monitored.
-- `--publish` currently supports TCP only.
-- Destination mode modifies the traffic-control configuration of the default network interface. Do not use it on an interface with important custom `tc`/qdisc configuration.
-- Forcefully killing Fault with `SIGKILL` or crashing the machine can prevent normal cleanup.
+- Linux only
+- Root privileges are currently required
+- Process mode only detects existing file paths as process targets
+- Domains are resolved when Fault starts; DNS changes are not continuously monitored
+- `--publish` currently supports TCP only
+- Destination mode modifies the traffic-control configuration of the default network interface. Do not use it on an interface with important custom `tc`/qdisc configuration
+- Forcefully killing Fault with `SIGKILL` or crashing the machine can prevent normal cleanup
 
 ## License
 
-Fault is licensed under the GNU Affero General Public License v3.0.
+Fault is licensed under the GNU Affero General Public License v3.0
