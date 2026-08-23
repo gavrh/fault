@@ -1,9 +1,18 @@
-use clap::Parser;
+use clap::{ArgAction, Parser};
 
 #[derive(Parser, Debug)]
 #[command(version, about)]
 pub struct Cli {
+    /// Increase logging detail
+    #[arg(short, long, action = ArgAction::Count)]
+    pub verbose: u8,
+
+    /// Publish a process TCP port as HOST:CONTAINER
+    #[arg(long = "publish", value_name = "HOST:CONTAINER")]
+    pub publish: Vec<String>,
+
     /// Target process (./server) or destinations (github.com ...)
+    #[arg(required = true)]
     pub target: Vec<String>,
 
     /// Packet corruption
@@ -74,5 +83,5 @@ pub struct Cli {
         default_value_t = 0.0,
         hide_default_value = true
     )]
-    pub reorder: f32
+    pub reorder: f32,
 }
