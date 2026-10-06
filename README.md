@@ -205,4 +205,4 @@ Fault tracks the networking resources it creates and removes them when the sessi
 
 ## License
 
-Fault is licensed under the GNU Affero General Public License v3.0
+Fault is licensed under the GNU General Public License v3.0
